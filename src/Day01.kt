@@ -1,15 +1,39 @@
 fun main() {
     fun part1(input: List<String>): Int {
-        return input.size
+        var currentMax = 0
+        var currentSum = 0
+
+        for (line in input) {
+            if (line.isEmpty()) {
+                if (currentSum > currentMax) {
+                    currentMax = currentSum
+                }
+                currentSum = 0
+            } else {
+                currentSum += line.toInt()
+            }
+        }
+
+        return currentMax
     }
 
     fun part2(input: List<String>): Int {
-        return input.size
-    }
+        // input is small enough to handle with sorting
+        // would also work for the first part
+        val calorieList = mutableListOf<Int>()
+        var currentSum = 0
+        for (line in input) {
+            if (line.isEmpty()) {
+                calorieList.add(currentSum)
+                currentSum = 0
+            } else {
+                currentSum += line.toInt()
+            }
+        }
 
-    // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day01_test")
-    check(part1(testInput) == 1)
+        calorieList.sortDescending()
+        return calorieList.subList(0, 3).sum()
+    }
 
     val input = readInput("Day01")
     println(part1(input))

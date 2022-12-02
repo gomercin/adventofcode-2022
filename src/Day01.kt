@@ -1,3 +1,17 @@
+/**
+ * Searches I needed to make:
+kotlin for loop
+kotlin check string empty
+kotlin string to integer
+kotlin array
+kotlin list
+kotlin mutable list
+kotlin sort
+kotlin sort reverse
+kotlin split list
+kotlin sum list
+ */
+
 fun main() {
     fun part1(input: List<String>): Int {
         var currentMax = 0

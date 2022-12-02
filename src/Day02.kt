@@ -1,14 +1,16 @@
 import java.util.*
 
 /*
-* searches:
+* searches I needed to make:
 * kotlin enum
 * kotlin switch
 * kotlin dictionary
 * kotlin enum ordinal
 * kotlin init array
 * kotlin init list
+* kotlin permutation
 * */
+
 enum class Move {
     ROCK, PAPER, SCISSOR
 }
@@ -71,6 +73,7 @@ fun main() {
 
     // from https://medium.com/@jcamilorada/recursive-permutations-calculation-algorithm-in-kotlin-86233a0a2ee1
     fun permutationsRecursive(input: List<Move>, index: Int, answers: MutableList<List<Move>>) {
+        // THIS TURNED OUT TO BE A PREMATURE OPTIMIZATION, SEE OTHER COMMENTS :)
         if (index == input.lastIndex) answers.add(input.toList())
         for (i in index .. input.lastIndex) {
             Collections.swap(input, index, i)
@@ -80,24 +83,38 @@ fun main() {
     }
 
     fun permutations(input: List<Move>): List<List<Move>> {
+        // THIS TURNED OUT TO BE A PREMATURE OPTIMIZATION, SEE OTHER COMMENTS :)
         val solutions = mutableListOf<List<Move>>()
         permutationsRecursive(input, 0, solutions)
         return solutions
     }
 
     fun part2(input: List<String>): Int {
-        val playerMoveList = listOf(Move.ROCK, Move.PAPER, Move.SCISSOR)
+        var totalScore = 0
 
-        val allPermutations = permutations(playerMoveList)
-        var maxScore = 0
-        for (perm in allPermutations) {
-            val currentScore = getTotalScore(input, perm)
-
-            if (currentScore > maxScore) {
-                maxScore = currentScore
+        for (line in input) {
+            val moves = line.split(" ")
+            val expectedResult = when (moves[1]) {
+                "X" -> Winner.OPPONENT
+                "Y" -> Winner.DRAW
+                "Z" -> Winner.PLAYER
+                else -> {Winner.DRAW}  // shouldn't happen
             }
+
+            val opponentMove = opponentMoveMap[moves[0]]!!
+            var playerMove = opponentMove
+            if (expectedResult != Winner.DRAW) {
+                playerMove = when(opponentMove) {
+                    Move.ROCK -> if (expectedResult == Winner.PLAYER) Move.PAPER else Move.SCISSOR
+                    Move.PAPER -> if (expectedResult == Winner.PLAYER) Move.SCISSOR else Move.ROCK
+                    Move.SCISSOR -> if (expectedResult == Winner.PLAYER) Move.ROCK else Move.PAPER
+                }
+            }
+
+            totalScore += getScore(opponentMove, playerMove)
         }
-        return maxScore
+
+        return totalScore
     }
 
     val input = readInput("Day02")
